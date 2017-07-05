@@ -20,7 +20,6 @@ struct vec_xorshift_plus
     // Initialize seeds to random device, unless alternate seeds are specified
     vec_xorshift_plus(__m256i _s0 = _mm256_setr_epi64x(rd(), rd(), rd(), rd()), __m256i _s1 = _mm256_setr_epi64x(rd(), rd(), rd(), rd())) : s0{_s0}, s1{_s1} {};
 
-
     // Generates 256 random bits (interpreted as 8 signed floats)
     // Returns an __m256 vector, so bits must be stored using _mm256_storeu_ps() intrinsic!
     inline __m256 gen_floats()

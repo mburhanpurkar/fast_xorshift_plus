@@ -10,6 +10,7 @@
 using namespace std;
 
 
+// Helper function
 void print_vec(float *a)
 {
   for (int i=0; i < 8; i++)
@@ -53,6 +54,8 @@ struct xorshift_plus
   }
 };
 
+
+// Randomized unit test comparing scalar and vectorized implementations
 bool test_xorshift(int niter=100)
 {
   float rn1 = rd();
@@ -93,6 +96,7 @@ bool test_xorshift(int niter=100)
   cout << "All rng tests passed." << endl;
   return true;
 }
+
 
 // Timing helper functions
 // FIXME using vintage-1970 gettimeofday().  C++11 std::chrono is supposed to be much better!
