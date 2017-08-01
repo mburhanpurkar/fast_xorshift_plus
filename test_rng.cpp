@@ -1,4 +1,4 @@
-// g++ -std=c++11 -Wall -O3 -march=native -o fast_rng fast_rng.cpp
+// g++ -std=c++11 -Wall -O3 -march=native -o test_rng test_rng.cpp
 
 #include <random>
 #include <cstring>
@@ -27,15 +27,22 @@ struct xorshift_plus
 {
   vector<uint64_t> seeds;
 
-  xorshift_plus(uint64_t _s0 = rd(), uint64_t _s1 = rd(),
-		uint64_t _s2 = rd(), uint64_t _s3 = rd(),
-		uint64_t _s4 = rd(), uint64_t _s5 = rd(),
-		uint64_t _s6 = rd(), uint64_t _s7 = rd())
+  xorshift_plus()
+  {
+    random_device rd;
+    seeds = {rd(), rd(), rd(), rd(), rd(), rd(), rd(), rd()};
+  };
+
+  xorshift_plus(uint64_t _s0, uint64_t _s1,
+		uint64_t _s2, uint64_t _s3,
+		uint64_t _s4, uint64_t _s5,
+		uint64_t _s6, uint64_t _s7)
     : seeds{_s0, _s1, _s2, _s3, _s4, _s5, _s6, _s7} {};
+
 
   inline void gen_floats(float *rn)
   {
-    for (int i=0; i<8; i+=2)
+      for (int i=0; i<8; i+=2)
       {
 	uint64_t x = seeds[i];
 	uint64_t y = seeds[i+1];
@@ -58,6 +65,7 @@ struct xorshift_plus
 // Randomized unit test comparing scalar and vectorized implementations
 bool test_xorshift(int niter=100)
 {
+  random_device rd;
   float rn1 = rd();
   float rn2 = rd();
   float rn3 = rd();
@@ -67,7 +75,7 @@ bool test_xorshift(int niter=100)
   float rn7 = rd();
   float rn8 = rd();
 
-  vec_xorshift_plus a(_mm256_setr_epi64x(rn1, rn3, rn5, rn7), _mm256_setr_epi64x(rn2, rn4, rn6, rn8));
+  fast_rng::vec_xorshift_plus a(_mm256_setr_epi64x(rn1, rn3, rn5, rn7), _mm256_setr_epi64x(rn2, rn4, rn6, rn8));
   float vrn_vec[8];
 
   xorshift_plus b(rn1, rn2, rn3, rn4, rn5, rn6, rn7, rn8);
@@ -109,16 +117,16 @@ inline struct timeval get_time()
 {
     struct timeval ret;
     if (gettimeofday(&ret, NULL) < 0)
-        throw std::runtime_error("gettimeofday() failed");
+        throw runtime_error("gettimeofday() failed");
     return ret;
 }
 
 
 static void time_mt19937(float *out, int niter, int nfreq, int nt_chunk, int stride)
 {
-    std::random_device rd;
-    std::mt19937 rng(rd());
-    std::uniform_real_distribution<> dist(1.0);
+    random_device rd;
+    mt19937 rng(rd());
+    uniform_real_distribution<> dist(1.0);
     
     struct timeval tv0 = get_time();
     
@@ -157,7 +165,7 @@ static void time_xorshift_plus(float *out, int niter, int nfreq, int nt_chunk, i
 
 static void time_vec_xorshift_plus(float *out, int niter, int nfreq, int nt_chunk, int stride)
 {
-    vec_xorshift_plus x;
+    fast_rng::vec_xorshift_plus x;
 
     struct timeval tv0 = get_time();
 
@@ -177,7 +185,7 @@ static void time_vec_xorshift_plus(float *out, int niter, int nfreq, int nt_chun
 
 static void time_64_bits(float *out, int niter)
 {
-  vec_xorshift_plus x;
+  fast_rng::vec_xorshift_plus x;
   __m256 tmp;
   
   struct timeval tv0 = get_time();
