@@ -25,21 +25,15 @@ inline bool is_aligned(const void *ptr, uintptr_t nbytes)
   // To protect against this, the vec_xorshift_constructors now test for alignedness, and throw
   // an exception if unaligned.
   //
-  // The compiler is supposed to ensure that the vec_xorshift_plus is always aligned, so if you
-  // do get an "unaligned vec_xorshift_plus" exception, then the compiler's alignment logic
-  // is being defeated somehow.  One way this can happen is when constructing a std::shared_ptr<>
-  // with std::make_shared<>().  For example,
-  //
-  //    shared_ptr<vec_xorshift_plus> = make_shared<vec_xorshift_plus>()
-  //
-  // can generate either an aligned or unaligned vec_xorshift_plus.  The solution in this case
-  // is to construct the shared pointer as follows:
-  //
-  //    shared_ptr<vec_xorshift_plus> = shared_ptr<vec_xorshift_plus> (new vec_xorshift_plus());
-  
+  // Generally speaking, the compiler will correctly align the vec_xorshift_plus if it is allocated
+  // on the call stack of a function, but it may not be aligned if it is allocated in the heap (or
+  // embedded in a larger heap-allocated class).  In this case, one solution is to represent the
+  // persistent rng state as a uint64_t[8] (which can be in the heap).  When a vec_xorshift_plus is
+  // needed, a temporary one can be constructed on the stack, using load/store functions (see below)
+  // to exchange state with the uint64_t[8].
+
   // According to C++11 spec, "uintptr_t" is an unsigned integer type
   // which is guaranteed large enough to represent a pointer.
-  
   return (uintptr_t(ptr) % nbytes) == 0;
 }
   
