@@ -183,22 +183,22 @@ static void time_vec_xorshift_plus(float *out, int niter, int nfreq, int nt_chun
 }
 
 
-static void time_64_bits(float *out, int niter)
+static void time_64_bits(__m256i *out, int niter)
 {
   fast_rng::vec_xorshift_plus x;
-  __m256 tmp;
+  __m256i tmp;
   
   struct timeval tv0 = get_time();
 
   for (int iter = 0; iter < niter; iter++)
-    tmp = _mm256_xor_ps(tmp, x.gen_floats());
+    tmp = _mm256_xor_si256(tmp, x.gen_rand_bits());
 
   struct timeval tv1 = get_time();
   double dt = time_diff(tv0, tv1);
   double noutputs = double(niter) * 256 / 64;
   double ns_per_output = 1.0e9 * dt / noutputs;
 
-  _mm256_storeu_ps(out, tmp);
+  _mm256_store_si256(out, tmp);
   
   cout << "64 bit test: ns_per_output = " << ns_per_output << endl;
 }
@@ -220,9 +220,8 @@ int main(int argc, char **argv)
   
     cout << "--------------------------------------------------" << endl;
 
-    float *out = new float[8];
-    memset(out, 0, 8 * sizeof(float));
-    time_64_bits(out, 1000000);
+    __m256i out;
+    time_64_bits(&out, 1000000);
 
     cout << "--------------------------------------------------" << endl;
   
