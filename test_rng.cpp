@@ -1,14 +1,14 @@
-#include "rng_helpers.hpp"
-#include <random>
-#include <iostream>
-#include "immintrin.h" // for intrinsics
 #include "fast_rng.hpp"
+#include "rng_helpers.hpp"
+#include <iostream>
+
 
 using namespace std;
 
 
-// Helper function
-void print_vec(float *a)
+
+// Helper function for debug
+inline void print_vec(float *a)
 {
     for (int i=0; i < 8; i++)
         cout << a[i] << " ";
@@ -17,7 +17,7 @@ void print_vec(float *a)
 
 
 // Randomized unit test comparing scalar and vectorized implementations
-bool test_xorshift(int niter=100)
+inline bool test_xorshift(int niter=10000)
 {
     random_device rd;
     float rn1 = rd();
@@ -60,9 +60,10 @@ bool test_xorshift(int niter=100)
 }
 
 
-static void time_64_bits(__m256i *out, int niter)
+// Timing test -- how long does it take to generate 64 random bit using vec_xorshift_plus?
+inline void time_64_bits(__m256i *out, int niter)
 {
-    fast_rng::vec_xorshift_plus x;
+  fast_rng::vec_xorshift_plus x;
     __m256i tmp;
   
     struct timeval tv0 = rng_helpers::get_time();
@@ -72,7 +73,7 @@ static void time_64_bits(__m256i *out, int niter)
 
     struct timeval tv1 = rng_helpers::get_time();
     double dt = rng_helpers::time_diff(tv0, tv1);
-    double noutputs = double(niter)  * 256; // generate 256 random bits per iteration
+    double noutputs = double(niter) * 256; // generate 256 random bits per iteration
     double ns_per_output = 1.0e9 * dt / noutputs * 64; // actually, get the time for one bit, then mutiply by 64
     
     _mm256_store_si256(out, tmp);

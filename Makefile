@@ -1,6 +1,5 @@
 #
 # Makefile
-# test_rng
 #
 
 all: test example

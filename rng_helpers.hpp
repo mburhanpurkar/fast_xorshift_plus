@@ -3,11 +3,15 @@
 #include <sys/time.h>
 #include <stdexcept>
 
+
 #ifndef _RNG_HELPERS_HPP
 #define _RNG_HELPERS_HPP
 
+
 namespace rng_helpers {
   
+
+//--------------------------------------------------------------------------------
 // Traditional scalar implementation for comparison
 // References:
 //   https://en.wikipedia.org/wiki/Xorshift
@@ -51,6 +55,7 @@ struct xorshift_plus
 };
 
 
+//--------------------------------------------------------------------------------
 // Timing helper functions
 // FIXME using vintage-1970 gettimeofday().  C++11 std::chrono is supposed to be much better!
 inline double time_diff(const struct timeval &tv1, const struct timeval &tv2)
@@ -59,7 +64,7 @@ inline double time_diff(const struct timeval &tv1, const struct timeval &tv2)
 }
 
 
-  inline struct timeval get_time()
+inline struct timeval get_time()
 {
     struct timeval ret;
     if (gettimeofday(&ret, NULL) < 0)

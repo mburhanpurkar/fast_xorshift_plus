@@ -1,7 +1,4 @@
 #include <random>
-#include <cstring>
-#include <iostream>
-#include <sys/time.h>
 #include "immintrin.h" // for intrinsics
 #include <stdexcept>
 
@@ -49,22 +46,23 @@ struct vec_xorshift_plus
     // Initialize seeds to random device, unless alternate seeds are specified
     vec_xorshift_plus()
     {
-      if (!is_aligned(&s0,32) || !is_aligned(&s1,32))
-	throw std::runtime_error("Fatal: unaligned vec_xorshift_plus!  See discussion in fast_rng.hpp");
+        if (!is_aligned(&s0,32) || !is_aligned(&s1,32))
+	    throw std::runtime_error("Fatal: unaligned vec_xorshift_plus!  See discussion in fast_rng.hpp");
       
         std::random_device rd;
         s0 = _mm256_setr_epi64x(rd(), rd(), rd(), rd());
         s1 = _mm256_setr_epi64x(rd(), rd(), rd(), rd());
     };
 
+    // Initialze to user-defined values (helpful for debugging)
     vec_xorshift_plus(__m256i _s0, __m256i _s1)
     {
 
-      if (!is_aligned(&s0,32) || !is_aligned(&s1,32))
-	throw std::runtime_error("Fatal: unaligned vec_xorshift_plus!  See discussion in fast_rng.hpp");
+        if (!is_aligned(&s0,32) || !is_aligned(&s1,32))
+	    throw std::runtime_error("Fatal: unaligned vec_xorshift_plus!  See discussion in fast_rng.hpp");
 
-      s0 = _s0;
-      s1 = _s1;
+	s0 = _s0;
+	s1 = _s1;
     };
 
     // Generates 256 random bits
@@ -86,7 +84,7 @@ struct vec_xorshift_plus
 	return _mm256_add_epi64(y, s1);
     }
 
-    // Interpret as 8 flots
+    // Interpret as eight signed 32-bit flots
     inline __m256 gen_floats()
     {
         // Convert to 8 signed 32-bit floats in range (-1, 1), since we multiply by 
