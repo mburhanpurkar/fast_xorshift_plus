@@ -15,7 +15,7 @@ implementation to a scalar implementation (in rng_helpers.hpp).
 To use `fast_rng::gen_rand_bits()` (that generates 256 random bits) or `fast_rng::gen_floats()` (interprets the 256 bits as eight 
 32-bit signed floats), use the following:
 
-<pre><code>
+```
 #include "fast_rng.hpp”
 
 fast_rng::vec_xorshift_plus rng; // instantiate random number generator with random device
@@ -25,7 +25,7 @@ _mm256_storeu_ps(&out, rng.gen_floats()); // store random numbers in array
 
 __m256i rn_vec; // SIMD vector to hold bits generated
 _mm256_store_si256(&rn_vec, rng.gen_rand_bits()); // store random numbers in vector
-<\code><\pre>
+```
 
 For a more comprehensive example using `gen_floats()` see example.cpp (`make example`). For use of `gen_random_bits()`, see 
 `time_64_bits()` in test_rng.cpp.
