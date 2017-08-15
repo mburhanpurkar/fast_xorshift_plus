@@ -1,7 +1,7 @@
 ## fast_xorshift_plus
 Potentially the world's fastest pseudo-random number generator!*
 
-This is a small header-only library ([fast_rng.hpp](https://github.com/mburhanpurkar/fast_xorshift_plus/blob/reorganize/fast_rng.cpp)) for fast random number generation. Currently, it **requires the AVX2 instruction
+This is a small header-only library ([fast_rng.hpp](https://github.com/mburhanpurkar/fast_xorshift_plus/blob/reorganize/fast_rng.hpp)) for fast random number generation. Currently, it **requires the AVX2 instruction
 set** (for `_mm256_xor_si256()`, `_mm256_slli_epi64()`, `_mm256_srli_epi64()`, and `_mm256_add_epi64()`). I hope to make this compatible with SSE4.2 soon! It has been optimised using [Intel Intrinsic functions](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#techs=MMX,SSE,SSE2,SSE3,SSSE3,SSE4_1,SSE4_2,AVX,AVX2&expand=0) 
 and makes use of SIMD vectorization, so the speed increase comes from running several PRNGs in parallel. 
 
