@@ -1,6 +1,7 @@
 #include "fast_rng.hpp"
 #include "rng_helpers.hpp"
 #include <iostream>
+#include <unistd.h>
 
 
 using namespace std;
@@ -82,8 +83,28 @@ inline void time_64_bits(__m256i *out, int niter)
 }
 
 
+// Note: #include <unistd.h> needed for usleep()
+// Thanks for solving this mystery, Kendrick! 
+void warm_up_cpu()
+{
+    // A throwaway computation which uses the CPU for ~10^9
+    // clock cycles.  The details (usleep, xor) are to prevent the
+    // compiler from optimizing it out!
+    //
+    // Empirically, this makes timing results more stable (without it,
+    // the CPU seems to run slow for the first ~10^9 cycles or so.)
+
+    long n = 0;
+    for (long i = 0; i < 1000L * 1000L * 1000L; i++)
+        n += (i ^ (i-1));
+    usleep(n % 2);
+}
+
 int main()
 {
+    // Warm up the CPU - needed for timing
+    warm_up_cpu();
+
     // Timing test
     __m256i out;
     time_64_bits(&out, 1000000);
