@@ -11,4 +11,4 @@ example: example.cpp fast_rng.hpp rng_helpers.hpp
 	g++ -std=c++11 -Wall -O3 -march=native -o example example.cpp
 
 clean:
-	rm -f *.o test example
+	rm -f *.o test example test_rng
