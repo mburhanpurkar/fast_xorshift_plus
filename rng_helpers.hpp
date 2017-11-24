@@ -9,7 +9,16 @@
 
 
 namespace rng_helpers {
-  
+
+
+// Extracts 64 random bits from a random_device -- thanks Kendrick!
+inline uint64_t rd64(std::random_device &rd)
+{
+    uint32_t low32 = rd();
+    uint32_t high32 = rd();
+    return (uint64_t(high32) << 32) | uint32_t(low32);
+}
+
 
 //--------------------------------------------------------------------------------
 // Traditional scalar implementation for comparison

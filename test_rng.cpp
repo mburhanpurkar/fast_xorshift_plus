@@ -21,14 +21,14 @@ inline void print_vec(float *a)
 inline bool test_xorshift(int niter=10000)
 {
     random_device rd;
-    uint64_t rn1 = fast_rng::rd64(rd);
-    uint64_t rn2 = fast_rng::rd64(rd);
-    uint64_t rn3 = fast_rng::rd64(rd);
-    uint64_t rn4 = fast_rng::rd64(rd);
-    uint64_t rn5 = fast_rng::rd64(rd);
-    uint64_t rn6 = fast_rng::rd64(rd);
-    uint64_t rn7 = fast_rng::rd64(rd);
-    uint64_t rn8 = fast_rng::rd64(rd);
+    uint64_t rn1 = rng_helpers::rd64(rd);
+    uint64_t rn2 = rng_helpers::rd64(rd);
+    uint64_t rn3 = rng_helpers::rd64(rd);
+    uint64_t rn4 = rng_helpers::rd64(rd);
+    uint64_t rn5 = rng_helpers::rd64(rd);
+    uint64_t rn6 = rng_helpers::rd64(rd);
+    uint64_t rn7 = rng_helpers::rd64(rd);
+    uint64_t rn8 = rng_helpers::rd64(rd);
           
     fast_rng::vec_xorshift_plus a(_mm256_setr_epi64x(rn1, rn3, rn5, rn7), _mm256_setr_epi64x(rn2, rn4, rn6, rn8));
     float vrn_vec[8];

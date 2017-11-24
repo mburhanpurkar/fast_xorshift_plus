@@ -1,6 +1,8 @@
 #include <random>
 #include "immintrin.h" // for intrinsics
 #include <stdexcept>
+#include "rng_helpers.hpp"
+
 
 #ifndef _FAST_RNG_HPP
 #define _FAST_RNG_HPP
@@ -33,13 +35,6 @@ inline bool is_aligned(const void *ptr, uintptr_t nbytes)
   return (uintptr_t(ptr) % nbytes) == 0;
 }
 
-// Extracts 64 random bits from a random_device -- thanks Kendrick!
-inline uint64_t rd64(std::random_device &rd)
-{
-    uint32_t low32 = rd();
-    uint32_t high32 = rd();
-    return (uint64_t(high32) << 32) | uint32_t(low32);
-}
 
 // Vectorized implementation of xorshift+ using intel intrinsics
 // (requires AVX2 instruction set)
@@ -56,8 +51,8 @@ struct vec_xorshift_plus
 	    throw std::runtime_error("Fatal: unaligned vec_xorshift_plus!  See discussion in fast_rng.hpp");
       
         std::random_device rd;
-        s0 = _mm256_setr_epi64x(rd64(rd), rd64(rd), rd64(rd), rd64(rd));
-	s1 = _mm256_setr_epi64x(rd64(rd), rd64(rd), rd64(rd), rd64(rd));
+        s0 = _mm256_setr_epi64x(rng_helpers::rd64(rd), rng_helpers::rd64(rd), rng_helpers::rd64(rd), rng_helpers::rd64(rd));
+	s1 = _mm256_setr_epi64x(rng_helpers::rd64(rd), rng_helpers::rd64(rd), rng_helpers::rd64(rd), rng_helpers::rd64(rd));
     };
 
   
