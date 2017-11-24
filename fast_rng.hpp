@@ -1,7 +1,6 @@
 #include <random>
 #include "immintrin.h" // for intrinsics
 #include <stdexcept>
-#include <iostream>
 
 #ifndef _FAST_RNG_HPP
 #define _FAST_RNG_HPP
@@ -42,16 +41,6 @@ inline uint64_t rd64(std::random_device &rd)
     return (uint64_t(high32) << 32) | uint32_t(low32);
 }
 
-inline void print_arri(__m256i a)
-{
-    // Helper function to print __m256i register (int[8])
-    int arr[8];
-    _mm256_storeu_si256((__m256i *) &arr, a);
-    // for (int i=0; i<8; ++i)
-    //   std::cout << arr[i] << " ";
-    // std::cout << "\n";
-}
-  
 // Vectorized implementation of xorshift+ using intel intrinsics
 // (requires AVX2 instruction set)
 struct vec_xorshift_plus
@@ -90,11 +79,6 @@ struct vec_xorshift_plus
         // y = s1
         __m256i y = s1;
 
-	// Print out original bits
-	//std::cout << "Original bits..." << std::endl;
-	print_arri(x);
-	print_arri(y);
-	
 	// s0 = y
         s0 = y;
         // x ^= (x << 23)
