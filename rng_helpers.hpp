@@ -2,6 +2,7 @@
 #include <random>
 #include <sys/time.h>
 #include <stdexcept>
+#include <iostream>
 
 
 #ifndef _RNG_HELPERS_HPP
@@ -40,6 +41,10 @@ struct xorshift_plus
 	    uint64_t x = seeds[i];
 	    uint64_t y = seeds[i+1];
 
+	    std::cout << "Scalar implementation, first bits:" << std::endl;
+	    std::cout << x << std::endl;
+	    std::cout << y << std::endl;
+	    
 	    seeds[i] = y;
 	    x ^= (x << 23);
 	    seeds[i+1] = x ^ y ^ (x >> 17) ^ (y >> 26);

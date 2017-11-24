@@ -1,7 +1,7 @@
 #include <random>
 #include "immintrin.h" // for intrinsics
 #include <stdexcept>
-
+#include <iostream>
 
 #ifndef _FAST_RNG_HPP
 #define _FAST_RNG_HPP
@@ -42,6 +42,15 @@ inline uint64_t rd64(std::random_device &rd)
     return (uint64_t(high32) << 32) | uint32_t(low32);
 }
 
+inline void print_arri(__m256i a)
+{
+    // Helper function to print __m256i register (int[8])
+    int arr[8];
+    _mm256_storeu_si256((__m256i *) &arr, a);
+    // for (int i=0; i<8; ++i)
+    //   std::cout << arr[i] << " ";
+    // std::cout << "\n";
+}
   
 // Vectorized implementation of xorshift+ using intel intrinsics
 // (requires AVX2 instruction set)
@@ -58,15 +67,14 @@ struct vec_xorshift_plus
 	    throw std::runtime_error("Fatal: unaligned vec_xorshift_plus!  See discussion in fast_rng.hpp");
       
         std::random_device rd;
-        s0 = _mm256_setr_epi64x(rd64(rd), rd64(rd), rd64(rd), rd64(rd));  //rd(), rd(), rd(), rd());
-        s1 = _mm256_setr_epi64x(rd64(rd), rd64(rd), rd64(rd), rd64(rd));  //rd(), rd(), rd(), rd());
+        s0 = _mm256_setr_epi64x(rd64(rd), rd64(rd), rd64(rd), rd64(rd));
+	s1 = _mm256_setr_epi64x(rd64(rd), rd64(rd), rd64(rd), rd64(rd));
     };
 
   
     // Initialze to user-defined values (helpful for debugging)
     vec_xorshift_plus(__m256i _s0, __m256i _s1)
     {
-
         if (!is_aligned(&s0,32) || !is_aligned(&s1,32))
 	    throw std::runtime_error("Fatal: unaligned vec_xorshift_plus!  See discussion in fast_rng.hpp");
 
@@ -81,7 +89,13 @@ struct vec_xorshift_plus
         __m256i x = s0;
         // y = s1
         __m256i y = s1;
-        // s0 = y
+
+	// Print out original bits
+	//std::cout << "Original bits..." << std::endl;
+	print_arri(x);
+	print_arri(y);
+	
+	// s0 = y
         s0 = y;
         // x ^= (x << 23)
         x = _mm256_xor_si256(x, _mm256_slli_epi64(x, 23));
@@ -101,8 +115,18 @@ struct vec_xorshift_plus
         return _mm256_mul_ps(_mm256_cvtepi32_ps(gen_rand_bits()), _mm256_set1_ps(4.6566129e-10));
     }  
 
-};
+    //  // Generate an array of size N with random numbers on (-1, 1). 
+    // inline void gen_arr(float *out, size_t N)
+    // {
+    //     if (N % 8 != 0)
+    // 	    throw std::runtime_error("gen_arr(out, N): N must be divisible by 8!");
 
+    // 	for (int i=0; i < N; i+=8)
+    // 	  _mm256_storeu_ps(out + i, gen_floats());
+    // }
+  
+};
+ 
 } // namespace fast_rng
 
 #endif // _FAST_RNG_HPP

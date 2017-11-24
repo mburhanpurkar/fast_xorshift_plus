@@ -12,7 +12,7 @@ using namespace std;
 inline void print_vec(float *a)
 {
     for (int i=0; i < 8; i++)
-        cout << a[i] << " ";
+      cout << a[i] << " ";
     cout << "\n\n";
 }
 
@@ -21,18 +21,25 @@ inline void print_vec(float *a)
 inline bool test_xorshift(int niter=10000)
 {
     random_device rd;
-    float rn1 = rd();
-    float rn2 = rd();
-    float rn3 = rd();
-    float rn4 = rd();
-    float rn5 = rd();
-    float rn6 = rd();
-    float rn7 = rd();
-    float rn8 = rd();
+    // float rn1 = rd();
+    // float rn2 = rd();
+    // float rn3 = rd();
+    // float rn4 = rd();
+    // float rn5 = rd();
+    // float rn6 = rd();
+    // float rn7 = rd();
+    // float rn8 = rd();
+    float rn1 = fast_rng::rd64(rd);
+    float rn2 = fast_rng::rd64(rd);
+    float rn3 = fast_rng::rd64(rd);
+    float rn4 = fast_rng::rd64(rd);
+    float rn5 = fast_rng::rd64(rd);
+    float rn6 = fast_rng::rd64(rd);
+    float rn7 = fast_rng::rd64(rd);
+    float rn8 = fast_rng::rd64(rd);
 
     fast_rng::vec_xorshift_plus a(_mm256_setr_epi64x(rn1, rn3, rn5, rn7), _mm256_setr_epi64x(rn2, rn4, rn6, rn8));
     float vrn_vec[8];
-
     rng_helpers::xorshift_plus b(rn1, rn2, rn3, rn4, rn5, rn6, rn7, rn8);
     float srn_vec[8];
 
@@ -50,7 +57,7 @@ inline bool test_xorshift(int niter=10000)
 		print_vec(srn_vec);
 		cout << "V code outputs: ";
 		print_vec(vrn_vec);
-		cout << "rng test failed: scalar and vectorized prngs are out of sync!" << endl;
+		cout << "rng test failed: scalar and vectorized prngs are out of sync on iter " << i << "!" << endl;
 		return false;
 	    }
 	}
@@ -99,6 +106,7 @@ void warm_up_cpu()
         n += (i ^ (i-1));
     usleep(n % 2);
 }
+
 
 int main()
 {
