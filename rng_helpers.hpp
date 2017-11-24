@@ -32,7 +32,7 @@ struct xorshift_plus
     xorshift_plus()
     {
         std::random_device rd;
-	seeds = {rd(), rd(), rd(), rd(), rd(), rd(), rd(), rd()};
+	seeds = {rd64(rd), rd64(rd), rd64(rd), rd64(rd), rd64(rd), rd64(rd), rd64(rd), rd64(rd)};
     };
 
     xorshift_plus(uint64_t _s0, uint64_t _s1,

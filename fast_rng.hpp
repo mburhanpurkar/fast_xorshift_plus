@@ -94,16 +94,15 @@ struct vec_xorshift_plus
         return _mm256_mul_ps(_mm256_cvtepi32_ps(gen_rand_bits()), _mm256_set1_ps(4.6566129e-10));
     }  
 
-    //  // Generate an array of size N with random numbers on (-1, 1). 
-    // inline void gen_arr(float *out, size_t N)
-    // {
-    //     if (N % 8 != 0)
-    // 	    throw std::runtime_error("gen_arr(out, N): N must be divisible by 8!");
+    // Generate an array of size N with random numbers on (-1, 1). 
+    inline void gen_arr(float *out, int N)
+    {
+        if (N % 8 != 0 || N < 0)
+    	    throw std::runtime_error("gen_arr(out, N): N must be divisible by 8 and greater than 0!");
 
-    // 	for (int i=0; i < N; i+=8)
-    // 	  _mm256_storeu_ps(out + i, gen_floats());
-    // }
-  
+    	for (int i=0; i < N; i+=8)
+    	  _mm256_storeu_ps(out + i, gen_floats());
+    }
 };
  
 } // namespace fast_rng

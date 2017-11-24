@@ -55,6 +55,25 @@ inline bool test_xorshift(int niter=10000)
 	}
     }
 
+    // Check that array generation is working
+    int n = 10000;
+    float *big_scalar = new float[n];
+    float *big_vector = new float[n];
+
+    a.gen_arr(big_vector, n);
+
+    for (int i = 0; i < n; i += 8)
+        b.gen_floats(big_scalar + i);
+	  
+    for (int i = 0; i < n; i++)
+    {
+        if (big_scalar[i] != big_vector[i])
+	{
+	    cout << "The output of vec_xorshift_plus: gen_arr diverged from the scalar implementation at iteration " << i << endl;
+	    return false;
+	}
+    }
+	  
     cout << "All rng tests passed." << endl;
     return true;
 }
