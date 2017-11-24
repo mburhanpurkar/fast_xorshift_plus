@@ -67,6 +67,10 @@ inline bool test_xorshift(int niter=10000)
 	  
     for (int i = 0; i < n; i++)
     {
+        if (big_scalar[i] < -1 || big_scalar[i] > 1 || big_vector[i] < -1 || big_vector[i] > 1)
+	{
+	    cout << "Oh no, something isn't outputting a floating point number between (-1, 1). This is very bad!" << endl;
+	}
         if (big_scalar[i] != big_vector[i])
 	{
 	    cout << "The output of vec_xorshift_plus: gen_arr diverged from the scalar implementation at iteration " << i << endl;
